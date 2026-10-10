@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard">
+    <!-- Month Navigation -->
+    <div class="month-nav">
+        <a href="{{ url_for('dashboard', year=prev_year, month=prev_month) }}" class="nav-btn">&lt;</a>
+        <span class="month-label">{{ month_name }} {{ year }}</span>
+        <a href="{{ url_for('dashboard', year=next_year, month=next_month) }}" class="nav-btn">&gt;</a>
+    </div>
+
+    <!-- Remaining Budget -->
+    <div class="remaining">
+        {% if budget %}
+            {% if used_percentage >= 1.0 %}
+                <div class="remaining-amount red">${{ "%.2f"|format(remaining) }}</div>
+            {% elif used_percentage >= 0.9 %}
+                <div class="remaining-amount yellow">${{ "%.2f"|format(remaining) }}</div>
+            {% else %}
+                <div class="remaining-amount green">${{ "%.2f"|format(remaining) }}</div>
+            {% endif %}
+            <div class="budget-subtitle">of ${{ "%.2f"|format(budget_amount) }}</div>
+        {% else %}
+            <div class="remaining-amount gray">No Budget Set</div>
+        {% endif %}
+    </div>
+
+    <!-- Input and Buttons -->
+    <div class="actions">
+        <form method="POST" action="{{ url_for('set_budget') }}" class="action-form">
+            <input type="hidden" name="year" value="{{ year }}">
+            <input type="hidden" name="month" value="{{ month }}">
+            <input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter amount" class="amount-input" required>
+            <button type="submit" class="btn">Set Budget</button>
+        </form>
+
+        {% if budget %}
+        <div class="tx-buttons">
+            <form method="POST" action="{{ url_for('add_transaction') }}" class="inline-form">
+                <input type="hidden" name="year" value="{{ year }}">
+                <input type="hidden" name="month" value="{{ month }}">
+                <input type="hidden" name="type" value="expense">
+                <input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter amount" class="amount-input" required>
+                <button type="submit" class="btn btn-expense">Add Expense</button>
+            </form>
+            <form method="POST" action="{{ url_for('add_transaction') }}" class="inline-form">
+                <input type="hidden" name="year" value="{{ year }}">
+                <input type="hidden" name="month" value="{{ month }}">
+                <input type="hidden" name="type" value="cash">
+                <input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter amount" class="amount-input" required>
+                <button type="submit" class="btn btn-cash">Add Extra Cash</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Transactions List -->
+    {% if transactions %}
+    <div class="transactions">
+        <h3>Transactions</h3>
+        {% for tx in transactions %}
+        <div class="tx-row">
+            <span class="tx-type {% if tx.amount < 0 %}expense{% else %}cash{% endif %}">
+                {{ "Expense" if tx.amount < 0 else "Extra Cash" }}
+            </span>
+            <span class="tx-amount">${{ "%.2f"|format(tx.amount) }}</span>
+            <span class="tx-date">{{ tx.date.strftime('%Y-%m-%d') }}</span>
+            <form method="POST" action="{{ url_for('delete_transaction', transaction_id=tx.id) }}" class="tx-delete">
+                <button type="submit" class="btn-delete" onclick="return confirm('Delete this transaction?')">X</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
