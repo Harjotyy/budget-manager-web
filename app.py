@@ -33,7 +33,11 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-change-i
 # DATABASE_URL tells SQLAlchemy where to find the database.
 # Locally: uses SQLite (a file called budget.db, just like the iPhone app).
 # On Render: this will be set to a PostgreSQL URL.
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///budget.db")
+# Render gives postgres:// but SQLAlchemy requires postgresql://
+database_url = os.environ.get("DATABASE_URL", "sqlite:///budget.db")
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 # Connect the database (defined in models.py) to this Flask app.
 db.init_app(app)
