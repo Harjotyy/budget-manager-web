@@ -25,11 +25,12 @@
     </div>
 
     <!-- Input and Buttons -->
+    <input type="text" inputmode="decimal" id="amount-input" placeholder="Enter amount" class="amount-input">
     <div class="actions">
         <form method="POST" action="{{ url_for('set_budget') }}" class="action-form">
             <input type="hidden" name="year" value="{{ year }}">
             <input type="hidden" name="month" value="{{ month }}">
-            <input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter amount" class="amount-input" required>
+            <input type="hidden" name="amount" id="amount-budget">
             <button type="submit" class="btn">Set Budget</button>
         </form>
 
@@ -39,14 +40,14 @@
                 <input type="hidden" name="year" value="{{ year }}">
                 <input type="hidden" name="month" value="{{ month }}">
                 <input type="hidden" name="type" value="expense">
-                <input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter amount" class="amount-input" required>
+                <input type="hidden" name="amount" id="amount-expense">
                 <button type="submit" class="btn btn-expense">Add Expense</button>
             </form>
             <form method="POST" action="{{ url_for('add_transaction') }}" class="inline-form">
                 <input type="hidden" name="year" value="{{ year }}">
                 <input type="hidden" name="month" value="{{ month }}">
                 <input type="hidden" name="type" value="cash">
-                <input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter amount" class="amount-input" required>
+                <input type="hidden" name="amount" id="amount-extra-cash">
                 <button type="submit" class="btn btn-cash">Add Extra Cash</button>
             </form>
         </div>
@@ -71,5 +72,19 @@
         {% endfor %}
     </div>
     {% endif %}
+    <script>
+    // Find every <form> inside the actions section (Set Budget, Add Expense, Add Extra Cash)
+    document.querySelectorAll('.actions form').forEach(function(form) {
+        // When any of those forms is submitted (button clicked)...
+        form.addEventListener('submit', function() {
+            // Grab whatever the user typed in the single input box
+            var amount = document.getElementById('amount-input').value;
+            // Find the hidden "amount" field inside THIS specific form
+            var hidden = form.querySelector('input[name="amount"]');
+            // Copy the typed value into the hidden field so the server receives it
+            hidden.value = amount;
+        });
+    });
+    </script>
 </div>
 {% endblock %}
