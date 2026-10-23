@@ -25,33 +25,32 @@
     </div>
 
     <!-- Input and Buttons -->
-    <input type="text" inputmode="decimal" id="amount-input" placeholder="Enter amount" class="amount-input">
     <div class="actions">
-        <form method="POST" action="{{ url_for('set_budget') }}" class="action-form">
-            <input type="hidden" name="year" value="{{ year }}">
-            <input type="hidden" name="month" value="{{ month }}">
-            <input type="hidden" name="amount" id="amount-budget">
-            <button type="submit" class="btn">Set Budget</button>
-        </form>
-
-        {% if budget %}
-        <div class="tx-buttons">
-            <form method="POST" action="{{ url_for('add_transaction') }}" class="inline-form">
+        <input type="text" inputmode="decimal" id="amount-input" placeholder="Enter amount" class="amount-input">
+        <div class="action-buttons">
+            <form method="POST" action="{{ url_for('set_budget') }}">
+                <input type="hidden" name="year" value="{{ year }}">
+                <input type="hidden" name="month" value="{{ month }}">
+                <input type="hidden" name="amount" id="amount-budget">
+                <button type="submit" class="btn">Set Budget</button>
+            </form>
+            {% if budget %}
+            <form method="POST" action="{{ url_for('add_transaction') }}">
                 <input type="hidden" name="year" value="{{ year }}">
                 <input type="hidden" name="month" value="{{ month }}">
                 <input type="hidden" name="type" value="expense">
                 <input type="hidden" name="amount" id="amount-expense">
-                <button type="submit" class="btn btn-expense">Add Expense</button>
+                <button type="submit" class="btn btn-expense">Expense</button>
             </form>
-            <form method="POST" action="{{ url_for('add_transaction') }}" class="inline-form">
+            <form method="POST" action="{{ url_for('add_transaction') }}">
                 <input type="hidden" name="year" value="{{ year }}">
                 <input type="hidden" name="month" value="{{ month }}">
                 <input type="hidden" name="type" value="cash">
                 <input type="hidden" name="amount" id="amount-extra-cash">
-                <button type="submit" class="btn btn-cash">Add Extra Cash</button>
+                <button type="submit" class="btn btn-cash">Extra Cash</button>
             </form>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 
     <!-- Transactions List -->
