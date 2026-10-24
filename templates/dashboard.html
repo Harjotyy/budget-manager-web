@@ -64,8 +64,8 @@
             </span>
             <span class="tx-amount">${{ "%.2f"|format(tx.amount) }}</span>
             <span class="tx-date">{{ tx.date.strftime('%Y-%m-%d') }}</span>
-            <form method="POST" action="{{ url_for('delete_transaction', transaction_id=tx.id) }}" class="tx-delete">
-                <button type="submit" class="btn-delete" onclick="return confirm('Delete this transaction?')">X</button>
+            <form method="POST" action="{{ url_for('delete_transaction', transaction_id=tx.id) }}" class="tx-delete" onsubmit="return confirm('Delete this transaction?')">
+                <button type="submit" class="btn-delete">X</button>
             </form>
         </div>
         {% endfor %}
